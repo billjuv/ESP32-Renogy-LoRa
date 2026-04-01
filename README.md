@@ -24,8 +24,9 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 
 - ESP32 DevKit1
 - Adafruit RFM95W LoRa transceiver (915MHz)
-- MAX3232 TTL/RS232 converter board
-- RJ12 6-wire cable
+- MAX3232 TTL/RS232 converter board  [I used](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title) 
+- MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [I used](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
+- RJ12 6-wire cable [One like this cut in two](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
 ---
 
@@ -39,8 +40,14 @@ Pins counted right-to-left with contacts facing you.
 | Pin 1 | Controller TX | RXD |
 | Pin 2 | Controller RX | TXD |
 | Pin 3 | GND | GND |
+| Pin 4 | GND | GND |
+| Pin 5 | PWR |+11-15v *|
+| Pin 6 | PWR |+11-15v *|
+* 11+v on Wonderer 10A, 15+v on Rover 20A
 
 > ⚠️ Never connect RS232 lines directly to the ESP32 — the voltage levels will damage it. Always use the MAX3232 converter.
+
+> ⚠️ Never plug USB from computer into ESP32 for programming if board is powered from USB. Computer could be damaged.
 
 ### MAX3232 (TTL side) to ESP32
 
