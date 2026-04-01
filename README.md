@@ -24,9 +24,9 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 
 - ESP32 DevKit1
 - Adafruit RFM95W LoRa transceiver (915MHz)
-- MAX3232 TTL/RS232 converter board  [I used](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title) 
-- MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [I used](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
-- RJ12 6-wire cable [One like this cut in two](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
+- MAX3232 TTL/RS232 converter board  [ (Part I used)](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title) 
+- MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [ (Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
+- RJ12 6-wire cable [ (One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
 ---
 
