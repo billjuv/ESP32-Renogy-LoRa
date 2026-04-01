@@ -28,6 +28,8 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 - MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [ (Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
 - RJ12 6-wire cable [ (One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
+- OMG LoRa Gateway [ (LILYGO LoRa32 915Mhz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SQ5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
+
 ---
 
 ## Wiring
@@ -115,7 +117,7 @@ Matched to an existing OpenMQTTGateway LoRa gateway:
 
 ## MQTT Output
 
-The transmitter publishes to your OMG gateway, which forwards to MQTT. The `"value"` field in the payload causes OMG to create a dedicated subtopic automatically:
+The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in the .cpp code. Change as desired):
 
 **Topic:**
 ```
@@ -142,7 +144,7 @@ MushLoRa/OMG_LORA_MOAPA/LORAtoMQTT/renogy_wonderer
 }
 ```
 
-> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. The Rover 20A returns a real value.
+> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. My Rover 20A returned a value even though no temperature probe was attached.
 
 ---
 
@@ -186,6 +188,7 @@ If your controller doesn't respond, use the included scan utility (`tools/scan.c
 ## Notes
 
 - The Wonderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
+- I saw reports that the Wonderer 10A could not supply the power for the ESP board from the RJ12 port. The one I purchased in 2026 worked.
 - Signal range tested at -79 RSSI at the far end of a residential yard using a small coil antenna oriented horizontally. A vertical antenna will improve this.
 - The 60-second poll interval is conservative and well within LoRa duty cycle limits.
 
