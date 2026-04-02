@@ -176,7 +176,7 @@ Set the device ID in `main.cpp` to match your controller:
 
 ## Scan Utility
 
-If your controller doesn't respond, use the included scan utility (`tools/scan.cpp`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
+If your controller doesn't respond, use the included scan utility (`scan.cpp`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
 
 ---
 
