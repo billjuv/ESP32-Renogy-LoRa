@@ -123,7 +123,7 @@ The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks
 
 **Topic:**
 ```
-OMG_LORA/LORAtoMQTT/renogy_wonderer
+OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer
 ```
 
 **Payload example:**
