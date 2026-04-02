@@ -11,8 +11,12 @@
 // ---- Renogy UART2 pins ----
 #define RXD2        16
 #define TXD2        17
-//#define RENOGY_ADDR 0xFF // Wonderer 10A
-#define RENOGY_ADDR 0xFF //Rover 20A
+#define RENOGY_ADDR 0xFF
+
+// ---- Device ID - change to match your controller ----
+#define DEVICE_ID   "renogy_wonderer"
+// #define DEVICE_ID "renogy_rover20"
+
 // ---- How often to send (milliseconds) ----
 #define SEND_INTERVAL 60000
 
@@ -42,33 +46,44 @@ void loop() {
   if (millis() - lastSend >= SEND_INTERVAL) {
     lastSend = millis();
 
-    uint8_t result = node.readHoldingRegisters(0x0100, 12);
+    uint8_t result = node.readHoldingRegisters(0x0100, 17);
 
     if (result == node.ku8MBSuccess) {
 
-      float battV    = node.getResponseBuffer(0x01) / 10.0;
-      float battA    = node.getResponseBuffer(0x02) / 100.0;
-      int   soc      = node.getResponseBuffer(0x00);
-      float solarV   = node.getResponseBuffer(0x07) / 10.0;
-      float solarA   = node.getResponseBuffer(0x08) / 100.0;
-      int   solarW   = node.getResponseBuffer(0x09);
-      uint16_t tempRaw   = node.getResponseBuffer(0x03);
-      int ctrlTemp  = (tempRaw & 0x7F00) >> 8;
-      if ((tempRaw & 0x8000) >> 15) ctrlTemp = -ctrlTemp;
-      int battTemp  = tempRaw & 0x7F;
-      if ((tempRaw & 0x0080) >> 7)  battTemp = -battTemp;
+      int   soc        = node.getResponseBuffer(0x00);
+      float battV      = node.getResponseBuffer(0x01) / 10.0;
+      float battA      = node.getResponseBuffer(0x02) / 100.0;
 
-     String payload = "{";
-      payload += "\"value\":\"renogy_rover20\",";
-      payload += "\"id\":\"renogy_rover20\",";
-      payload += "\"batt_v\":"  + String(battV,  1) + ",";
-      payload += "\"batt_a\":"  + String(battA,  2) + ",";
-      payload += "\"soc\":"     + String(soc)        + ",";
-      payload += "\"solar_v\":" + String(solarV, 1) + ",";
-      payload += "\"solar_a\":" + String(solarA, 2) + ",";
-      payload += "\"solar_w\":" + String(solarW)     + ",";
-      payload += "\"batt_t\":"  + String(battTemp)  + ",";
-      payload += "\"ctrl_t\":"  + String(ctrlTemp);
+      uint16_t tempRaw = node.getResponseBuffer(0x03);
+      int battTemp     = tempRaw & 0x7F;
+      if ((tempRaw & 0x0080) >> 7)  battTemp = -battTemp;
+      int ctrlTemp     = (tempRaw & 0x7F00) >> 8;
+      if ((tempRaw & 0x8000) >> 15) ctrlTemp = -ctrlTemp;
+
+      float solarV     = node.getResponseBuffer(0x07) / 10.0;
+      float solarA     = node.getResponseBuffer(0x08) / 100.0;
+      int   solarW     = node.getResponseBuffer(0x09);
+
+      float battVMin   = node.getResponseBuffer(0x0B) / 10.0;
+      float battVMax   = node.getResponseBuffer(0x0C) / 10.0;
+      int   solarWMax  = node.getResponseBuffer(0x0F);
+      int   solarWMin  = node.getResponseBuffer(0x10);
+
+      String payload = "{";
+      payload += "\"value\":\""  + String(DEVICE_ID) + "\",";
+      payload += "\"id\":\""     + String(DEVICE_ID) + "\",";
+      payload += "\"batt_v\":"   + String(battV,   1) + ",";
+      payload += "\"batt_a\":"   + String(battA,   2) + ",";
+      payload += "\"soc\":"      + String(soc)         + ",";
+      payload += "\"solar_v\":"  + String(solarV,  1) + ",";
+      payload += "\"solar_a\":"  + String(solarA,  2) + ",";
+      payload += "\"solar_w\":"  + String(solarW)      + ",";
+      payload += "\"batt_t\":"   + String(battTemp)    + ",";
+      payload += "\"ctrl_t\":"   + String(ctrlTemp)    + ",";
+      payload += "\"solar_w_max\":" + String(solarWMax)   + ",";
+      payload += "\"solar_w_min\":" + String(solarWMin)   + ",";
+      payload += "\"batt_v_max\":" + String(battVMax, 1)  + ",";
+      payload += "\"batt_v_min\":" + String(battVMin, 1);
       payload += "}";
 
       Serial.println("Sending: " + payload);
