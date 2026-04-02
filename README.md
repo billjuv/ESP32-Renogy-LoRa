@@ -28,6 +28,7 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 - MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [ (Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
 - RJ12 6-wire cable [ (One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
+Related:
 - OMG LoRa Gateway [ (LILYGO LoRa32 915Mhz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SQ5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
 
 ---
