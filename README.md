@@ -8,6 +8,8 @@ Tested with:
 
 Should work with any Renogy charge controller that has an RS232 RJ12 port.
 
+> Note: This project covers RS232 controllers only. Renogy also makes controllers with RS485 ports, which use a different converter (MAX485) and require DE/RE pin toggling in the firmware. The Modbus registers and LoRa transmission code should be largely the same — community contributions for RS485 support are welcome.
+
 ---
 
 ## How It Works
@@ -24,12 +26,12 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 
 - ESP32 DevKit1
 - Adafruit RFM95W LoRa transceiver (915MHz)
-- MAX3232 TTL/RS232 converter board  [ (Part I used)](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title) 
-- MP1584EN DC-DC buck converter	- Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [ (Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
-- RJ12 6-wire cable [ (One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
+- MAX3232 TTL/RS232 converter board — [(Part I used)](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title)
+- MP1584EN DC-DC buck converter — Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
+- RJ12 6-wire cable — [(One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
 Related:
-- OMG LoRa Gateway [ (LILYGO LoRa32 915Mhz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SQ5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
+- OMG LoRa Gateway — [(LILYGO LoRa32 915MHz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SX5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
 
 ---
 
@@ -44,13 +46,14 @@ Pins counted right-to-left with contacts facing you.
 | Pin 2 | Controller RX | TXD |
 | Pin 3 | GND | GND |
 | Pin 4 | GND | GND |
-| Pin 5 | PWR |+11-15v *|
-| Pin 6 | PWR |+11-15v *|
-* 11+v on Wonderer 10A, 15+v on Rover 20A
+| Pin 5 | PWR | +11–15V * |
+| Pin 6 | PWR | +11–15V * |
+
+\* ~11V on Wonderer 10A, ~15V on Rover 20A
 
 > ⚠️ Never connect RS232 lines directly to the ESP32 — the voltage levels will damage it. Always use the MAX3232 converter.
 
-> ⚠️ Never plug USB from computer into ESP32 for programming if board is powered from USB. Computer could be damaged.
+> ⚠️ Never plug a USB cable from your computer into the ESP32 for programming while the board is also powered from the controller's USB port. This could damage your computer.
 
 ### MAX3232 (TTL side) to ESP32
 
@@ -80,14 +83,14 @@ Pins counted right-to-left with contacts facing you.
 
 ## Power
 
-Both controllers have been tested using their built-in USB-A port to power the ESP32:
+Both controllers have been tested using their built-in USB-A port to power the ESP32 via a buck converter:
 
 | Controller | USB Voltage | Notes |
 |------------|-------------|-------|
-| Wonderer 10A | ~11.3V | Use a USB cable directly to ESP32 USB port |
-| Rover 20A | ~15.1V | Use a USB cable directly to ESP32 USB port |
+| Wonderer 10A | ~11.3V | Step down to 5V with buck converter |
+| Rover 20A | ~15.1V | Step down to 5V with buck converter |
 
-> ⚠️ The RJ12 port on the Rover 20A supplies ~15V on pins 4-6 — do NOT use this to power the ESP32 directly without a step-down converter.
+> ⚠️ The RJ12 port on the Rover 20A supplies ~15V on pins 4–6 — do NOT use this to power the ESP32 directly without a step-down converter.
 
 The USB-A ports on both controllers appear to be always active when the battery has charge, making them a convenient and clean power source.
 
@@ -118,7 +121,7 @@ Matched to an existing OpenMQTTGateway LoRa gateway:
 
 ## MQTT Output
 
-The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in the .cpp code. Change as desired):
+The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired):
 
 **Topic:**
 ```
@@ -145,7 +148,7 @@ MushLoRa/OMG_LORA_MOAPA/LORAtoMQTT/renogy_wonderer
 }
 ```
 
-> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. My Rover 20A returned a value even though no temperature probe was attached.
+> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. The Rover 20A returned a value even without a temperature probe attached.
 
 ---
 
@@ -189,7 +192,7 @@ If your controller doesn't respond, use the included scan utility (`scan.cpp`) t
 ## Notes
 
 - The Wonderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
-- I saw reports that the Wonderer 10A could not supply the power for the ESP board from the RJ12 port. The one I purchased in 2026 worked.
+- Some sources report that the Wonderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine via its USB-A port.
 - Signal range tested at -79 RSSI at the far end of a residential yard using a small coil antenna oriented horizontally. A vertical antenna will improve this.
 - The 60-second poll interval is conservative and well within LoRa duty cycle limits.
 
