@@ -83,7 +83,7 @@ Pins counted right-to-left with contacts facing you.
 
 ## Power
 
-Both controllers have been tested using their built-in USB-A port to power the ESP32 via a buck converter:
+Both controllers have been tested using their built-in RS232 port to power the ESP32 via a buck converter:
 
 | Controller | USB Voltage | Notes |
 |------------|-------------|-------|
@@ -91,8 +91,6 @@ Both controllers have been tested using their built-in USB-A port to power the E
 | Rover 20A | ~15.1V | Step down to 5V with buck converter |
 
 > ⚠️ The RJ12 port on the Rover 20A supplies ~15V on pins 4–6 — do NOT use this to power the ESP32 directly without a step-down converter.
-
-The USB-A ports on both controllers appear to be always active when the battery has charge, making them a convenient and clean power source.
 
 ---
 
@@ -125,7 +123,7 @@ The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks
 
 **Topic:**
 ```
-MushLoRa/OMG_LORA_MOAPA/LORAtoMQTT/renogy_wonderer
+OMG_LORA/LORAtoMQTT/renogy_wonderer
 ```
 
 **Payload example:**
