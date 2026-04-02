@@ -27,7 +27,7 @@ Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF �
 - ESP32 DevKit1
 - Adafruit RFM95W LoRa transceiver (915MHz)
 - MAX3232 TTL/RS232 converter board — [(Part I used)](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title)
-- MP1584EN DC-DC buck converter — Adjusted to step Renogy USB voltage down to 5V to power the ESP32 [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
+- MP1584EN DC-DC buck converter — Adjusted to step Renogy RJ12 voltage down to 5V to power the ESP32 [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
 - RJ12 6-wire cable — [(One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
 Related:
@@ -53,7 +53,7 @@ Pins counted right-to-left with contacts facing you.
 
 > ⚠️ Never connect RS232 lines directly to the ESP32 — the voltage levels will damage it. Always use the MAX3232 converter.
 
-> ⚠️ Never plug a USB cable from your computer into the ESP32 for programming while the board is also powered from the controller's USB port. This could damage your computer.
+> ⚠️ Never plug a USB cable from your computer into the ESP32 for programming while the board is also powered from the controller's RJ12 port. This could damage your computer.
 
 ### MAX3232 (TTL side) to ESP32
 
@@ -83,14 +83,14 @@ Pins counted right-to-left with contacts facing you.
 
 ## Power
 
-Both controllers have been tested using their built-in RS232 port to power the ESP32 via a buck converter:
+Both controllers have been tested using their RJ12 RS232 port (pins 4–6) to power the ESP32 via a buck converter:
 
-| Controller | USB Voltage | Notes |
-|------------|-------------|-------|
+| Controller | RJ12 Voltage | Notes |
+|------------|--------------|-------|
 | Wonderer 10A | ~11.3V | Step down to 5V with buck converter |
 | Rover 20A | ~15.1V | Step down to 5V with buck converter |
 
-> ⚠️ The RJ12 port on the Rover 20A supplies ~15V on pins 4–6 — do NOT use this to power the ESP32 directly without a step-down converter.
+> ⚠️ Do NOT connect RJ12 pins 4–6 directly to the ESP32 — the voltage will damage it. Always use a buck converter to step down to 5V first.
 
 ---
 
@@ -139,10 +139,14 @@ OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer
   "solar_w": 1,
   "batt_t": 0,
   "ctrl_t": 25,
+  "solar_w_max": 51,
+  "solar_w_min": 0,
+  "batt_v_max": 14.0,
+  "batt_v_min": 13.1,
   "rssi": -79,
   "snr": 9.75,
   "pferror": 226,
-  "packetSize": 153
+  "packetSize": 220
 }
 ```
 
@@ -187,10 +191,34 @@ If your controller doesn't respond, use the included scan utility (`scan.cpp`) t
 
 ---
 
+## Home Assistant Integration
+
+Since the data arrives via MQTT as clean JSON, it can be added to Home Assistant using MQTT sensors in `configuration.yaml`. Add one entry per field:
+
+```yaml
+mqtt:
+  sensor:
+    - name: "Renogy Battery Voltage"
+      state_topic: "OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer"
+      value_template: "{{ value_json.batt_v }}"
+      unit_of_measurement: "V"
+
+    - name: "Renogy SOC"
+      state_topic: "OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer"
+      value_template: "{{ value_json.soc }}"
+      unit_of_measurement: "%"
+```
+
+Repeat for each field (`solar_v`, `solar_w`, `ctrl_t`, `solar_w_max`, `batt_v_max`, etc.), adjusting the topic for the Rover if needed. Restart Home Assistant after saving.
+
+> Note: Your MQTT broker must be configured in Home Assistant first. See the [HA MQTT integration docs](https://www.home-assistant.io/integrations/mqtt/) for details.
+
+---
+
 ## Notes
 
 - The Wonderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
-- Some sources report that the Wonderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine via its USB-A port.
+- Some sources report that the Wonderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine.
 - Signal range tested at -79 RSSI at the far end of a residential yard using a small coil antenna oriented horizontally. A vertical antenna will improve this.
 - The 60-second poll interval is conservative and well within LoRa duty cycle limits.
 
