@@ -14,8 +14,8 @@
 #define RENOGY_ADDR 0xFF
 
 // ---- Device ID - change to match your controller ----
-#define DEVICE_ID   "renogy_wonderer"
-// #define DEVICE_ID "renogy_rover20"
+//#define DEVICE_ID   "renogy_wonderer"
+ #define DEVICE_ID "renogy_rover20"
 
 // ---- How often to send (milliseconds) ----
 #define SEND_INTERVAL 60000
