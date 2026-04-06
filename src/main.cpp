@@ -18,7 +18,7 @@
  #define DEVICE_ID "renogy_rover20"
 
 // ---- How often to send (milliseconds) ----
-#define SEND_INTERVAL 60000
+#define SEND_INTERVAL 15000
 
 ModbusMaster node;
 
