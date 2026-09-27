@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <ModbusMaster.h>
+#include <esp_task_wdt.h>   // NEW: hardware watchdog
 
 // ---- LoRa pins ----
 #define LORA_CS     5
@@ -20,7 +21,27 @@
 // ---- How often to send (milliseconds) ----
 #define SEND_INTERVAL 59000
 
+// ---- Watchdog timeout (seconds) ----
+// Must comfortably cover the worst-case time a single loop() pass could
+// take (a Modbus read + retry + LoRa send), but be far shorter than
+// SEND_INTERVAL so a genuinely stuck loop gets caught quickly.
+#define WDT_TIMEOUT_S 20
+
 ModbusMaster node;
+
+// Attempts a Modbus read, retrying once on failure.
+// Returns the ModbusMaster result code from the last attempt.
+uint8_t readRenogyRegisters() {
+  uint8_t result = node.readHoldingRegisters(0x0100, 17);
+  if (result != node.ku8MBSuccess) {
+    Serial.print("Modbus read failed (0x");
+    Serial.print(result, HEX);
+    Serial.println("), retrying once...");
+    delay(250);
+    result = node.readHoldingRegisters(0x0100, 17);
+  }
+  return result;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -38,15 +59,29 @@ void setup() {
   LoRa.setSpreadingFactor(7);
   LoRa.setSignalBandwidth(125E3);
   Serial.println("LoRa ready.");
+
+  // NEW: arm the hardware watchdog. If loop() ever fails to come back
+  // around within WDT_TIMEOUT_S seconds (e.g. a Modbus/UART read that
+  // never returns), the ESP32 reboots itself automatically instead of
+  // needing a manual power cycle.
+  esp_task_wdt_init(WDT_TIMEOUT_S, true);  // true = reboot on timeout
+  esp_task_wdt_add(NULL);                  // watch the current (loop) task
+  Serial.println("Watchdog armed.");
 }
 
 void loop() {
+  // NEW: feed the watchdog every pass. During normal operation loop()
+  // runs this line constantly while just checking millis(), so the
+  // watchdog only ever runs out if something downstream (Modbus, LoRa)
+  // genuinely blocks and never returns.
+  esp_task_wdt_reset();
+
   static unsigned long lastSend = 0;
 
   if (millis() - lastSend >= SEND_INTERVAL) {
     lastSend = millis();
 
-    uint8_t result = node.readHoldingRegisters(0x0100, 17);
+    uint8_t result = readRenogyRegisters();
 
     if (result == node.ku8MBSuccess) {
 
