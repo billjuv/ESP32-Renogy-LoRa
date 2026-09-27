@@ -3,7 +3,7 @@
 A standalone LoRa transmitter that reads data from a Renogy solar charge controller via RS232 Modbus and transmits it wirelessly to an OpenMQTTGateway (OMG) LoRa gateway. Built for remote monitoring where WiFi is unavailable or impractical.
 
 Tested with:
-- Renogy Wonderer 10A PWM (RNG-CTRL-WND10)
+- Renogy Wanderer 10A PWM (RNG-CTRL-WND10)
 - Renogy Rover 20A MPPT
 
 Should work with any Renogy charge controller that has an RS232 RJ12 port.
@@ -49,7 +49,7 @@ Pins counted right-to-left with contacts facing you.
 | Pin 5 | PWR | +11–15V * |
 | Pin 6 | PWR | +11–15V * |
 
-\* ~11V on Wonderer 10A, ~15V on Rover 20A
+\* ~11V on Wanderer 10A, ~15V on Rover 20A
 
 > ⚠️ Never connect RS232 lines directly to the ESP32 — the voltage levels will damage it. Always use the MAX3232 converter.
 
@@ -87,7 +87,7 @@ Both controllers have been tested using their RJ12 RS232 port (pins 4–6) to po
 
 | Controller | RJ12 Voltage | Notes |
 |------------|--------------|-------|
-| Wonderer 10A | ~11.3V | Step down to 5V with buck converter |
+| Wanderer 10A | ~11.3V | Step down to 5V with buck converter |
 | Rover 20A | ~15.1V | Step down to 5V with buck converter |
 
 > ⚠️ Do NOT connect RJ12 pins 4–6 directly to the ESP32 — the voltage will damage it. Always use a buck converter to step down to 5V first.
@@ -119,7 +119,7 @@ Matched to an existing OpenMQTTGateway LoRa gateway:
 
 ## MQTT Output
 
-The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired):
+The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired (*I'm staying with the misspelled "wonderer" here, rather than "wanderer")):
 
 **Topic:**
 ```
@@ -150,7 +150,7 @@ OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer
 }
 ```
 
-> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. The Rover 20A returned a value even without a temperature probe attached.
+> Note: `batt_t` will always read 0 on the Wanderer 10A as it has no external battery temperature sensor connection. The Rover 20A returned a value even without a temperature probe attached.
 
 ---
 
@@ -170,7 +170,7 @@ lib_deps =
 
 Set the device ID in `main.cpp` to match your controller:
 ```cpp
-// For Wonderer 10A:
+// For Wanderer 10A:
 #define DEVICE_ID "renogy_wonderer"
 
 // For Rover 20A:
@@ -217,7 +217,7 @@ Repeat for each field (`solar_v`, `solar_w`, `ctrl_t`, `solar_w_max`, `batt_v_ma
 
 ## Notes
 
-- The Wonderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
+- The Wanderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
 - Some sources report that the Wonderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine.
 - Signal range tested at -79 RSSI at the far end of a residential yard using a small coil antenna oriented horizontally. A vertical antenna will improve this.
 - The 60-second poll interval is conservative and well within LoRa duty cycle limits.
