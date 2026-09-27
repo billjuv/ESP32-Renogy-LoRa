@@ -1,5 +1,7 @@
 # ESP32-Renogy-LoRa
 
+> 💡 A smaller, cheaper version of this project using the Seeed Studio XIAO ESP32-S3 + Wio-SX1262 LoRa Kit (no LoRa wiring needed) is available at [ESP32-S3_XiAO-Renogy-LoRa](https://github.com/billjuv/ESP32-S3_XiAO-Renogy-LoRa). Both send the same payload and work with the same gateway.
+
 A standalone LoRa transmitter that reads data from a Renogy solar charge controller via RS232 Modbus and transmits it wirelessly to an OpenMQTTGateway (OMG) LoRa gateway. Built for remote monitoring where WiFi is unavailable or impractical.
 
 Tested with:
