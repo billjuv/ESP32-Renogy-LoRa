@@ -1,4 +1,5 @@
 # ESP32-Renogy-LoRa
+> 🍄 One of several related projects. See the full list at **[billjuv.github.io](https://billjuv.github.io)**.
 
 > 💡 A smaller, cheaper version of this project using the Seeed Studio XIAO ESP32-S3 + Wio-SX1262 LoRa Kit (no LoRa wiring needed) is available at [ESP32-S3_XiAO-Renogy-LoRa](https://github.com/billjuv/ESP32-S3_XiAO-Renogy-LoRa). Both send the same payload and work with the same gateway.
 
